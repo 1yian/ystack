@@ -1,0 +1,13 @@
+onboarding = false
+[theme]
+name = "terminal"
+[theme.custom]
+panel_bg = "#101014"
+sidebar_bg = "#0c0c10"
+active_row_bg = "#16161d"
+text = "#e6e6ea"
+accent = "#3dffc0"
+green = "#3dffc0"
+blue = "#6eb6ff"
+red = "#ff5c7a"
+yellow = "#ffb454"

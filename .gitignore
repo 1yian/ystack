@@ -1,0 +1,12 @@
+result
+result-*
+.direnv/
+.DS_Store
+node_modules/
+# Secrets never belong here
+**/.env
+**/.env.*
+**/auth.json
+**/models.json
+**/*.pem
+**/*.key
