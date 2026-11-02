@@ -1,6 +1,6 @@
 # ystack
 
-A reproducible, clean setup of one person's daily environment, as Home Manager
+A reproducible, clean setup of my daily environment, as Home Manager
 modules: the terminal UI, the shell, Pi, the agent instructions and skills, and
 the fleet prerequisites (Herdr, treehouse, no-mistakes, lavish). No root needed
 once Nix exists. Machine identity, hardware, OS config, and work profiles belong
