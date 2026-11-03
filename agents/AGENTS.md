@@ -6,6 +6,8 @@ Do not try to estimate development costs (time), and do not give weight to their
 
 Never use em dashes, including in final summaries and reports. Use plain dashes instead.
 
+When writing text in other languages, write each locale natively from your own knowledge of that language, as a native copywriter would. Do not translate the English line by line, and do not rely on translation software or translation APIs.
+
 When end-to-end testing a product, be picky about the UI / UX you see and be obsessed with pixel perfection. If something looks clearly off, even if it is not directly related to what you are working on, try to get it fixed along the way too. If a screenshot capture call times out, don't repeat the identical call - fall back to reading the rendered DOM/text or adjust capture settings before retrying.
 
 Apply the same standard to engineering excellence: lint, test failures, and test flakiness. If the lint tool isn't available in the environment, install or invoke it another way (e.g. uvx, pip install) rather than skipping it; if a check turns up pre-existing issues beyond your own change, report them instead of only clearing your own file.
