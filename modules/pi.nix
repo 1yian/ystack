@@ -9,8 +9,11 @@ let
   root = config.ystack.root;
   checkout = config.ystack.checkout;
   ext = name: ".pi/agent/extensions/${name}";
-  settingsSrc = if cfg.settingsFile != null then cfg.settingsFile else "${root}/pi/settings.json";
-  linkedSettings = checkout != null && cfg.settingsFile == null;
+  # In checkout mode the merge reads the working copy, so a switch applies its edits.
+  settingsSrc =
+    if cfg.settingsFile != null then cfg.settingsFile
+    else if checkout != null then "${checkout}/pi/settings.json"
+    else "${root}/pi/settings.json";
   # jq keeps the base file's key order; the overlay replaces whole top-level keys.
   tiersOverlayFile = pkgs.runCommand "tiers.json" { nativeBuildInputs = [ pkgs.jq ]; } ''
     jq --slurpfile overlay ${pkgs.writeText "tiers-overlay.json" (builtins.toJSON cfg.tiersOverlay)} \
@@ -54,9 +57,6 @@ in
       "${ext "statusline.ts"}".source = link "pi/extensions/statusline.ts";
       "${ext "fm-readable-ui.ts"}".source = link "pi/extensions/fm-readable-ui.ts";
     }
-    // lib.optionalAttrs linkedSettings {
-      ".pi/agent/settings.json".source = link "pi/settings.json";
-    }
     // lib.optionalAttrs cfg.extensions.rateLimitFallback {
       "${ext "anthropic-rate-limit-fallback.ts"}".source = link "pi/extensions/anthropic-rate-limit-fallback.ts";
     }
@@ -64,24 +64,23 @@ in
       "${ext "opencode-zen"}".source = link "pi/extensions/opencode-zen";
     };
 
-    home.activation.ystackPiSettings = lib.mkIf (!linkedSettings) (
-      lib.hm.dag.entryAfter [ "linkGeneration" ] ''
-        dest="$HOME/.pi/agent/settings.json"
-        if [[ ! -v DRY_RUN ]]; then
-          base=$(${pkgs.coreutils}/bin/mktemp)
-          ${pkgs.jq}/bin/jq 'del(.lastChangelogVersion)' ${settingsSrc} > "$base"
-          mkdir -p "$HOME/.pi/agent"
-          if [[ -L "$dest" || ! -e "$dest" ]]; then
-            rm -f "$dest"
-            install -m 644 "$base" "$dest"
-          else
-            merged=$(${pkgs.coreutils}/bin/mktemp)
-            ${pkgs.jq}/bin/jq -s '.[0] * .[1]' "$dest" "$base" > "$merged" && install -m 644 "$merged" "$dest"
-            rm -f "$merged"
-          fi
-          rm -f "$base"
+    home.activation.ystackPiSettings = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      dest="$HOME/.pi/agent/settings.json"
+      if [[ ! -v DRY_RUN ]]; then
+        base=$(${pkgs.coreutils}/bin/mktemp)
+        # Pi's own bookkeeping keys never come from the managed base.
+        ${pkgs.jq}/bin/jq 'del(.lastChangelogVersion, .extensionChangelogVersions)' ${settingsSrc} > "$base"
+        mkdir -p "$HOME/.pi/agent"
+        if [[ -L "$dest" || ! -e "$dest" ]]; then
+          rm -f "$dest"
+          install -m 644 "$base" "$dest"
+        else
+          merged=$(${pkgs.coreutils}/bin/mktemp)
+          ${pkgs.jq}/bin/jq -s '.[0] * .[1]' "$dest" "$base" > "$merged" && install -m 644 "$merged" "$dest"
+          rm -f "$merged"
         fi
-      ''
-    );
+        rm -f "$base"
+      fi
+    '';
   };
 }

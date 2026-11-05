@@ -48,7 +48,12 @@ principles (cursor/plugins, `pstack/`, MIT).
 ## Modes
 
 - **Checkout** (`ystack.checkout` set): files link to the working copy out-of-store; edits apply live.
-- **Store** (default): files link from the pinned flake input; Pi's `settings.json`, which Pi writes back, is merged on activation (managed keys win, other keys kept).
+- **Store** (default): files link from the pinned flake input.
+
+Two things are never linked into the working copy, because tools write to them and would dirty tracked files:
+
+- Pi's `settings.json` is merged on activation in both modes (managed keys win, other keys such as Pi's changelog bookkeeping are kept). In checkout mode the merge reads the working copy, so a switch applies its edits.
+- The `no-mistakes` skill always links read-only from the store: `no-mistakes init` refreshes `~/.agents/skills/no-mistakes/SKILL.md` from the binary's own text, which would overwrite the tracked file.
 
 ## Not here
 
