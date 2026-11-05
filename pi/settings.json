@@ -21,7 +21,7 @@
     },
     "npm:@gotgenes/pi-anthropic-auth@3.4.3",
     "npm:@ff-labs/pi-fff@0.11.0",
-    "git:github.com/1yian/pi-tiers@v0.1.13",
+    "git:github.com/1yian/pi-tiers@v0.1.14",
     "npm:pi-multi-pass@1.12.0"
   ],
   "lastChangelogVersion": "1.4.0",
@@ -52,7 +52,11 @@
     "enabled": true,
     "maxRetries": 5,
     "baseDelayMs": 2000,
-    "maxAgentDelayMs": 30000
+    "maxAgentDelayMs": 30000,
+    "provider": {
+      "maxRetries": 1,
+      "maxRetryDelayMs": 2000
+    }
   },
   "warnings": {
     "anthropicExtraUsage": false
