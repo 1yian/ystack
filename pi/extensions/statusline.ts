@@ -105,6 +105,7 @@ export default function statusline(pi: ExtensionAPI): void {
 	let speed: { start: number; chars: number; lastRender: number } | undefined;
 	let lastRate: number | undefined;
 	let requestRender: (() => void) | undefined;
+	let invalidateSessionStats: (() => void) | undefined;
 	// Latest pi-tiers route; null when the session is not on a tier.
 	let tierRoute: TierRoute | null = null;
 	pi.events.on("pi-tiers:route", (data) => {
@@ -147,6 +148,12 @@ export default function statusline(pi: ExtensionAPI): void {
 		requestRender?.();
 	});
 
+	pi.on("session_tree", async () => {
+		// Navigation can append off-branch entries and return to the same leaf.
+		invalidateSessionStats?.();
+		requestRender?.();
+	});
+
 	pi.on("model_select", async () => requestRender?.());
 	pi.on("thinking_level_select", async () => requestRender?.());
 
@@ -154,13 +161,23 @@ export default function statusline(pi: ExtensionAPI): void {
 		ctx.ui.setFooter((tui, theme, footerData) => {
 			requestRender = () => tui.requestRender();
 			const unsubscribe = footerData.onBranchChange(() => tui.requestRender());
-			let cache: { key: string; totals: Totals } | undefined;
+			let cache: {
+				key: string;
+				totals: Totals;
+				usage: ReturnType<ExtensionContext["getContextUsage"]>;
+				name: string | undefined;
+			} | undefined;
+			invalidateSessionStats = () => { cache = undefined; };
 
-			const usageTotals = (): Totals => {
+			const sessionStats = () => {
 				const sm = ctx.sessionManager;
+				const model = ctx.model;
+				// Entries are append-only and every append advances the leaf. Check that
+				// O(1) identity BEFORE getEntries(), which copies the whole session.
+				// Model limits also affect context usage without a new message.
+				const key = JSON.stringify([sm.getSessionId(), sm.getLeafId(), model?.provider, model?.id, model?.contextWindow]);
+				if (cache?.key === key) return cache;
 				const entries = sm.getEntries();
-				const key = `${sm.getSessionId()}:${sm.getLeafId()}:${entries.length}`;
-				if (cache?.key === key) return cache.totals;
 				const totals: Totals = { input: 0, output: 0, cacheRead: 0, cacheWrite: 0, cost: 0 };
 				for (const entry of entries as unknown as UsageEntry[]) {
 					if (entry.type === "usage") addUsage(totals, entry.usage);
@@ -170,8 +187,8 @@ export default function statusline(pi: ExtensionAPI): void {
 						addUsage(totals, entry.usage);
 					}
 				}
-				cache = { key, totals };
-				return totals;
+				cache = { key, totals, usage: ctx.getContextUsage(), name: sm.getSessionName() };
+				return cache;
 			};
 
 			const dim = (text: string) => theme.fg("dim", text);
@@ -180,7 +197,7 @@ export default function statusline(pi: ExtensionAPI): void {
 			const locationRow = (width: number): string[] => {
 				const cwd = formatCwd(ctx.sessionManager.getCwd());
 				const branch = footerData.getGitBranch();
-				const name = ctx.sessionManager.getSessionName();
+				const name = sessionStats().name;
 				const build = (path: string) => {
 					let row = `${theme.fg("accent", ICON_DIR)} ${theme.fg("text", path)}`;
 					if (branch) row += `${GAP}${theme.fg("success", `${ICON_BRANCH} ${branch}`)}`;
@@ -247,8 +264,7 @@ export default function statusline(pi: ExtensionAPI): void {
 				}
 				const head = variants.find((variant) => visibleWidth(variant) <= width) ?? truncateToWidth(name, width, "…");
 
-				const totals = usageTotals();
-				const usage = ctx.getContextUsage();
+				const { totals, usage } = sessionStats();
 				// Shown in this order; a higher priority number is dropped first when space runs out.
 				// `short` is a narrower form to fall back to before the stat is dropped outright.
 				const stats: Array<{ text: string; priority: number; short?: string }> = [];
@@ -302,6 +318,7 @@ export default function statusline(pi: ExtensionAPI): void {
 				dispose() {
 					unsubscribe();
 					requestRender = undefined;
+					invalidateSessionStats = undefined;
 				},
 				invalidate() {
 					cache = undefined;
