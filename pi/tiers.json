@@ -63,7 +63,7 @@
     "orchestrator": {
       "description": "Firstmate and second-mate supervisor sessions.",
       "chain": [
-        "claude/claude-opus-5-5:medium",
+        "claude/claude-opus-5-5:high",
         "openai-codex/gpt-6.1-sol:medium",
         "xai/grok-4.7:medium"
       ]
