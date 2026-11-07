@@ -38,8 +38,8 @@ in
     '';
   };
   treehouse =
-    archiveTool "treehouse" "3.1.4"
-      "a169277ffdc5f48b51a4b53ce6c2e46fe3c222a5017c67f72bf9260a9b382ae2";
+    archiveTool "treehouse" "3.1.8"
+      "bd6227d909ba8046263ae5d4e072ccbcf43010cac9d7289b1262126510edfeed";
   no-mistakes =
     archiveTool "no-mistakes" "1.84.0"
       "b0fb8a9df412c5fa1fb92a3584ffa1d4d5b4d6e0d1738efa2f8b88320f8bf1c2";
