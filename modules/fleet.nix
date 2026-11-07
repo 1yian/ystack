@@ -12,13 +12,13 @@ let
   # Exact pins. Bump deliberately; Herdr, no-mistakes, and node changes need a
   # coordinated all-host rollout (herdr machine add refuses a mismatched server).
   corePins = [
-    "@earendil-works/pi-coding-agent@1.4.0"
-    "gh-axi@0.1.41"
-    "chrome-devtools-axi@0.1.42"
-    "chrome-devtools-mcp@1.11.0"
-    "lavish-axi@0.1.89"
+    "@earendil-works/pi-coding-agent@1.5.0"
+    "gh-axi@0.1.49"
+    "chrome-devtools-axi@0.1.46"
+    "chrome-devtools-mcp@1.12.0"
+    "lavish-axi@0.1.96"
     "tasks-axi@0.2.6"
-    "quota-axi@0.1.63"
+    "quota-axi@0.1.69"
   ];
 in
 {
