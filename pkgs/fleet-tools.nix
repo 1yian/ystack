@@ -41,6 +41,6 @@ in
     archiveTool "treehouse" "3.1.8"
       "bd6227d909ba8046263ae5d4e072ccbcf43010cac9d7289b1262126510edfeed";
   no-mistakes =
-    archiveTool "no-mistakes" "1.84.0"
-      "b0fb8a9df412c5fa1fb92a3584ffa1d4d5b4d6e0d1738efa2f8b88320f8bf1c2";
+    archiveTool "no-mistakes" "1.106.1"
+      "fbf131356a278623a509b6b50ecb39c5375b1a82e7dcfc48e42d10e761416d1e";
 }

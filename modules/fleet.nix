@@ -13,7 +13,7 @@ let
   # coordinated all-host rollout (herdr machine add refuses a mismatched server).
   corePins = [
     "@earendil-works/pi-coding-agent@1.5.0"
-    "gh-axi@0.1.49"
+    "gh-axi@0.1.50"
     "chrome-devtools-axi@0.1.46"
     "chrome-devtools-mcp@1.12.0"
     "lavish-axi@0.1.96"
