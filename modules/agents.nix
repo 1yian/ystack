@@ -4,7 +4,7 @@
 let
   cfg = config.ystack;
   link = cfg.link;
-  skillNames = [ "axi" "lavish" "no-mistakes" "principles" "appllama-usage" "appllama-app-design-skill" ];
+  skillNames = [ "axi" "lavish" "no-mistakes" "principles" ];
   # `no-mistakes init` rewrites ~/.agents/skills/no-mistakes/SKILL.md with the text
   # embedded in the installed binary. Linked out-of-store, that write lands in the
   # checkout and dirties the tracked file, so this one skill always links read-only
