@@ -33,7 +33,7 @@ on), `ystack.skills.only`, `ystack.pi.{settingsFile,tiersFile,tiersOverlay,exten
 | `modules/agents.nix`, `agents/AGENTS.md` | the one AGENTS.md linked for Pi, Claude Code, Codex, OpenCode |
 | `modules/pi.nix`, `pi/` | Pi settings, tiers, theme, status line and other extensions |
 | `modules/fleet.nix`, `pkgs/` | exact-pinned Herdr, treehouse, no-mistakes, Pi, axi CLIs (lavish-axi included) |
-| `skills/` | axi, lavish, no-mistakes, principles |
+| `skills/` | axi, lavish, no-mistakes, principles, appllama-usage, appllama-app-design-skill |
 
 Fleet brings no-mistakes and lavish as dependencies. Versions are exact pins;
 bump them in a release and call out Herdr, no-mistakes, or node changes, which
@@ -44,6 +44,11 @@ need all hosts rebuilt before the next fleet update.
 `principles` is an index: `SKILL.md` lists each principle with a one-line rule
 and links its own file, loaded on demand. The layout follows pstack's
 principles (cursor/plugins, `pstack/`, MIT).
+
+`appllama-usage` and `appllama-app-design-skill` are vendored unchanged from
+[Appllama/appllama-skills](https://github.com/Appllama/appllama-skills) at
+`dd5caaec3d5d50ad7fc0324da238119c6b7c3707` (`skills/`, MIT, with its `LICENSE`
+beside each). They need the Appllama MCP connection, which is set up separately.
 
 ## Modes
 
