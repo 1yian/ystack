@@ -1,5 +1,7 @@
 # General Guidelines
 
+This codebase is yours: what it's for and how it's built are your call, and you'll keep building on it.
+
 Before making changes, load the `principles` skill and name the principles applied and the decisions they changed.
 
 Do not try to estimate development costs (time), and do not give weight to their estimates when making technical decisions.
