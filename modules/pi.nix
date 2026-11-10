@@ -1,6 +1,8 @@
 # Pi: settings, tiers, theme, and extensions. Pi writes settings.json back (e.g.
 # lastChangelogVersion), so outside checkout mode it is merged on activation
 # instead of linked read-only: ystack-managed keys win, other keys are kept.
+# mcp.json (Pi's MCP servers, written by `pi mcp add` and /mcp) is merged the same
+# way, by server name.
 { config, pkgs, lib, ... }:
 
 let
@@ -37,6 +39,19 @@ in
       type = lib.types.attrs;
       default = { };
       description = "Top-level keys of tiers.json to replace (e.g. rules).";
+    };
+    mcpServers = lib.mkOption {
+      type = lib.types.attrsOf lib.types.attrs;
+      default = { };
+      example = { docs = { url = "https://example.com/mcp"; exposure = "deferred"; }; };
+      description = ''
+        MCP servers to declare in ~/.pi/agent/mcp.json, in Pi's own `mcpServers`
+        entry shape. A server named here replaces the entry of that name on every
+        switch; servers added by hand or by `pi mcp add`, and other top-level keys,
+        are kept. Nothing is written while this is empty. No credentials here: they
+        land in the Nix store, and OAuth servers need none (`pi mcp login <name>`
+        stores tokens in ~/.pi/agent/mcp-auth.json).
+      '';
     };
     extensions = {
       rateLimitFallback = lib.mkEnableOption "automatic Anthropic rate-limit fallback";
@@ -82,5 +97,25 @@ in
         rm -f "$base"
       fi
     '';
+
+    # Pi edits mcp.json in place, so it must stay a regular writable file: a symlink
+    # (e.g. into the store) is replaced by a copy of what it points to.
+    home.activation.ystackPiMcp = lib.mkIf (cfg.mcpServers != { }) (lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+      dest="$HOME/.pi/agent/mcp.json"
+      if [[ ! -v DRY_RUN ]]; then
+        src="$dest"
+        [[ -e "$src" ]] || src=/dev/null
+        merged=$(${pkgs.coreutils}/bin/mktemp)
+        if ${pkgs.jq}/bin/jq -s --argjson servers ${lib.escapeShellArg (builtins.toJSON cfg.mcpServers)} \
+          '(.[0] // {}) | .mcpServers = ((.mcpServers // {}) + $servers)' "$src" > "$merged"; then
+          mkdir -p "$HOME/.pi/agent"
+          [[ ! -L "$dest" ]] || rm -f "$dest"
+          cat "$merged" > "$dest"
+        else
+          warnEcho "ystack: cannot merge MCP servers into $dest (invalid JSON?); left unchanged"
+        fi
+        rm -f "$merged"
+      fi
+    '');
   };
 }

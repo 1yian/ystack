@@ -20,7 +20,7 @@ home-manager.users.me = {
 ```
 
 Options (`modules/`): `ystack.{shell,ui,agents,skills,pi,fleet}.enable` (default
-on), `ystack.skills.only`, `ystack.pi.{settingsFile,tiersFile,tiersOverlay,extensions.*}`,
+on), `ystack.skills.only`, `ystack.pi.{settingsFile,tiersFile,tiersOverlay,mcpServers,extensions.*}`,
 `ystack.fleet.{npmPrefix,npmExtra,herdrPiIntegration,linuxBrowser.enable}`,
 `ystack.ui.{wezterm.localConfig,fastfetchConfig}`.
 
@@ -49,6 +49,21 @@ principles (cursor/plugins, `pstack/`, MIT).
 [Appllama/appllama-skills](https://github.com/Appllama/appllama-skills) at
 `dd5caaec3d5d50ad7fc0324da238119c6b7c3707` (`skills/`, MIT, with its `LICENSE`
 beside each). They need the Appllama MCP connection, which is set up separately.
+
+## Pi MCP servers
+
+`ystack.pi.mcpServers` declares servers in Pi's own `mcpServers` shape. ystack
+declares none; the consuming repo does, per host:
+
+```nix
+ystack.pi.mcpServers.docs = { url = "https://example.com/mcp"; exposure = "deferred"; };
+```
+
+Each switch merges them into `~/.pi/agent/mcp.json` (created if missing): a
+declared name replaces that entry, and servers added by `pi mcp add`, plus other
+top-level keys, are kept. The file stays a regular file because Pi writes it, and
+nothing is written while the option is empty. Put no credentials here (they land
+in the Nix store); OAuth servers sign in with `pi mcp login <name>`.
 
 ## Modes
 
