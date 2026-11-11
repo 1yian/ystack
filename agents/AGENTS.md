@@ -16,6 +16,8 @@ Apply the same standard to engineering excellence: lint, test failures, and test
 
 Unit tests are considered not useful. Do not create new unit test files or functions that mirror the implementation, even when e2e testing seems harder to set up in the moment - that difficulty is a signal to build e2e coverage or evidence artifacts, not to fall back to unit tests. E2E tests from the perspective of the user, and evidence artifacts for me to review, are what's valuable.
 
+Never write code comments or docstrings. Text read at run time (tool or function descriptions, CLI help, schema descriptions) goes in an explicit description argument or field instead.
+
 Run long commands in the foreground with a timeout that fits the command. Never poll with a sleep loop. Never hide work in a background `&` job. Inside fleet, use fleet's built-in long-command tool (run_long), which wakes you when the command finishes.
 
 PR descriptions and evidence compare main to the branch head, for the whole change. Rebuild both after every push.

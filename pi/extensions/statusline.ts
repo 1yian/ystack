@@ -34,7 +34,6 @@ const TIERS_KEY = "pi-tiers"; // pi-tiers: drawn from its structured route event
 const HIDDEN_STATUS_KEYS = new Set([TOKENS_PER_SECOND_KEY, FAST_MODE_KEY, TIERS_KEY]);
 const TIERS_PROVIDER = "tier";
 
-/** Structured route published by pi-tiers on `pi-tiers:route`. */
 interface TierRoute {
 	selected: string;
 	tier: string;
@@ -88,12 +87,10 @@ function thinkingColor(theme: Theme, level: string): string {
 	}
 }
 
-/** `claude-sonnet-5-5` -> `sonnet-5.5`; other ids pass through. */
 function shortModel(id: string): string {
 	return id.replace(/^claude-/, "").replace(/-(\d+)-(\d+)$/, "-$1.$2");
 }
 
-/** Join parts left-aligned and right-aligned on one row of exactly `width` cells. */
 function spread(left: string, right: string, width: number): string {
 	const room = width - visibleWidth(left) - visibleWidth(right);
 	if (right && room >= GAP.length) return left + " ".repeat(room) + right;

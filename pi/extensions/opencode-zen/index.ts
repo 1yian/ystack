@@ -26,19 +26,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-/**
- * OpenCode Zen free tier, from Pi, without a proxy.
- *
- * The free tier only answers requests shaped like the official OpenCode client:
- * `stream: true`, a `bash` and a `read` function in `tools`, an `opencode/<ver>`
- * User-Agent, and a matching `x-opencode-session` / `x-opencode-session-id` pair.
- * Anything else comes back as `403 FreeTierError`.
- *
- * A normal Pi turn already carries tools named `bash` and `read`, but summarization
- * / compaction builds a tool-less request, which is exactly the shape the server
- * refuses. This extension fills the shape back in for any request missing it and
- * delegates everything else to the built-in openai-completions implementation.
- */
 import {
 	getModels,
 	openAICompletionsApi,
@@ -51,7 +38,6 @@ import {
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
 const ZEN_BASE_URL = "https://opencode.ai/zen/v1";
-/** Must look like an official client; the free tier rejects unknown agents. */
 const OPENCODE_UA = "opencode/1.18.31 ai-sdk/provider-utils/4.0.23 runtime/bun/1.3.14";
 
 const HEX = "0123456789abcdef";
@@ -60,23 +46,12 @@ const pick = (chars: string): string => chars[Math.floor(Math.random() * chars.l
 const repeat = (n: number, chars: string): string =>
 	Array.from({ length: n }, () => pick(chars)).join("");
 
-/**
- * A session id the free tier accepts: `ses_` + 12 lowercase hex + 14 base62.
- * The last three hex digits must land in 0xFC0..0xFFF (a decrementing-timestamp
- * layout); UUIDs, rising counters and shared constants are all rejected with 403.
- */
 export const newZenSessionId = (): string =>
 	`ses_${repeat(9, HEX)}f${pick("cdef")}${pick(HEX)}${repeat(14, BASE62)}`;
 
 const env = (globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env;
-/** One id per process. Set OPENCODE_ZEN_SESSION to pin an id known to work. */
 const SESSION = env?.OPENCODE_ZEN_SESSION || newZenSessionId();
 
-/**
- * The two function definitions the shape gate looks for, by exact name. They are
- * placeholders: Pi only ever sends this request without tools (compaction), so
- * nothing is expected to call them.
- */
 const GATE_TOOLS = [
 	{
 		type: "function",
@@ -104,7 +79,6 @@ const GATE_TOOLS = [
 	},
 ];
 
-/** Fills in the request shape the free tier demands. Complete requests pass through. */
 export function shapeZenPayload(payload: unknown): unknown {
 	if (!payload || typeof payload !== "object") return payload;
 	const p = { ...(payload as Record<string, unknown>) };
