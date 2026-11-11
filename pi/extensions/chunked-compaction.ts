@@ -1,14 +1,3 @@
-/**
- * Chunked compaction: keeps compaction from failing when the old conversation is too big for one
- * summary request.
- *
- * Pi sends the whole span to summarize in one request, and the summary output is capped to whatever
- * room is left in the window. A session already past the trigger (a huge tool result, a resumed
- * session, a manual /compact) can leave no room, so the summary hits the token cap and compaction
- * fails. When the span will not fit with room to answer, this summarizes it in window-sized chunks,
- * folding each into the previous summary with Pi's own update prompt. Spans that fit go through
- * Pi's default path untouched.
- */
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { convertToLlm, generateSummaryWithUsage, serializeConversation } from "@earendil-works/pi-coding-agent";
 
