@@ -55,6 +55,7 @@
     "visual": {
       "description": "Work whose acceptance depends on visual quality or visual judgment: UI and UX, layout, styling, copy and design passes, landing pages and websites (including building the real site or app screens from approved designs, checked by screenshots), design systems, motion graphics, ads, video, or other creative media.",
       "chain": [
+        "claude/claude-fable-5-2:low",
         "claude/claude-opus-5-5:medium",
         "openai-codex/gpt-6.1-sol:medium",
         "xai/grok-4.7:medium"
