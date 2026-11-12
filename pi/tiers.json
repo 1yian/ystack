@@ -104,7 +104,7 @@
       "description": "no-mistakes reviewer: a different lab than the Claude-heavy implementers.",
       "chain": [
         "openai-codex/gpt-6.1-sol:medium",
-        "claude/claude-opus-5-5:high",
+        "claude/claude-opus-5-5:low",
         "xai/grok-4.7:high"
       ]
     }
