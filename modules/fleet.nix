@@ -1,13 +1,14 @@
 # Fleet host prerequisites: Herdr, treehouse, no-mistakes, Pi, and the axi CLIs
 # (lavish-axi included), all at exact pinned versions. Fleet needs no-mistakes
-# and lavish, so enabling fleet brings both. On macOS these tools are installed
-# by hand today; the pinned builds here are Linux x86_64.
+# and lavish, so enabling fleet brings both.
 { config, pkgs, lib, ... }:
 
 let
   cfg = config.ystack.fleet;
   root = config.ystack.root;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
+  isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
+  chromeDevtoolsMcpPin = "chrome-devtools-mcp@1.13.0";
   tools = import ../pkgs/fleet-tools.nix { inherit pkgs; };
   # Exact pins. Bump deliberately; Herdr, no-mistakes, and node changes need a
   # coordinated all-host rollout (herdr machine add refuses a mismatched server).
@@ -15,7 +16,7 @@ let
     "@earendil-works/pi-coding-agent@1.5.2"
     "gh-axi@0.1.51"
     "chrome-devtools-axi@0.1.46"
-    "chrome-devtools-mcp@1.13.0"
+    chromeDevtoolsMcpPin
     "lavish-axi@0.1.96"
     "tasks-axi@0.2.6"
     "quota-axi@0.1.69"
@@ -27,13 +28,13 @@ in
     npmPrefix = lib.mkOption {
       type = lib.types.str;
       default = "${config.home.homeDirectory}/.local";
-      description = "Global npm prefix the pinned CLIs are installed into (Linux).";
+      description = "Global npm prefix for the pinned CLIs (Linux) and chrome-devtools-mcp (macOS).";
     };
     npmExtra = lib.mkOption {
       type = lib.types.listOf lib.types.str;
       default = [ ];
       example = [ "vercel@64.2.0" ];
-      description = "Extra exact npm pins reconciled together with the core pins.";
+      description = "Extra exact npm pins reconciled together with the core pins (Linux).";
     };
     herdrPiIntegration = lib.mkOption {
       type = lib.types.bool;
@@ -45,8 +46,14 @@ in
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      # Seed a writable default, not a read-only link: Herdr's Settings saves it.
-      # Existing local preferences are never overwritten.
+      home.activation.ystackNpmPins = lib.mkIf (isLinux || isDarwin) (
+        lib.hm.dag.entryAfter [ "writeBoundary" ] ''
+          run env PATH="${pkgs.nodejs}/bin:${pkgs.bash}/bin:$PATH" \
+            ${pkgs.bash}/bin/bash ${root}/bin/npm-pins.sh \
+            ${lib.escapeShellArgs ([ cfg.npmPrefix ] ++ (if isLinux then corePins ++ cfg.npmExtra else [ chromeDevtoolsMcpPin ]))}
+        ''
+      );
+      home.sessionPath = lib.mkIf (cfg.npmPrefix != "${config.home.homeDirectory}/.local") [ "${cfg.npmPrefix}/bin" ];
       home.activation.ystackHerdrDefaults = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
         if [[ ! -e "$HOME/.config/herdr/config.toml" ]]; then
           run mkdir -p "$HOME/.config/herdr"
@@ -54,6 +61,9 @@ in
         fi
       '';
     }
+    (lib.mkIf isDarwin {
+      home.packages = [ pkgs.nodejs ];
+    })
     (lib.mkIf isLinux {
       home.packages = [
         tools.herdr
@@ -63,12 +73,6 @@ in
         pkgs.gh
         pkgs.zstd
       ];
-      home.activation.ystackNpmPins = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-        run env PATH="${pkgs.nodejs}/bin:${pkgs.bash}/bin:$PATH" \
-          ${pkgs.bash}/bin/bash ${root}/bin/npm-pins.sh \
-          ${lib.escapeShellArgs ([ cfg.npmPrefix ] ++ corePins ++ cfg.npmExtra)}
-      '';
-      home.sessionPath = lib.mkIf (cfg.npmPrefix != "${config.home.homeDirectory}/.local") [ "${cfg.npmPrefix}/bin" ];
       # Fleet reads Pi pane state from Herdr's own Pi integration (herdr-agent-state.ts).
       home.activation.ystackHerdrPiIntegration = lib.mkIf cfg.herdrPiIntegration (
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''

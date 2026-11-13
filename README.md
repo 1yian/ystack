@@ -39,6 +39,11 @@ Fleet brings no-mistakes and lavish as dependencies. Versions are exact pins;
 bump them in a release and call out Herdr, no-mistakes, or node changes, which
 need all hosts rebuilt before the next fleet update.
 
+On Linux, activation reconciles all fleet npm pins plus `ystack.fleet.npmExtra`.
+On macOS, it reconciles only `chrome-devtools-mcp` from the same pin; other
+fleet tools remain separately installed. Both use `ystack.fleet.npmPrefix`
+(default `~/.local`), so an existing npm install there is upgraded in place.
+
 ## Skills
 
 `principles` is an index: `SKILL.md` lists each principle with a one-line rule
