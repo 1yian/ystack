@@ -9,8 +9,8 @@ usage() {
   exit 1
 }
 
-if [ "$(uname -s)" != Linux ] || [ "$(id -u)" = 0 ]; then
-  echo 'Run npm-pins.sh as your Linux login user.' >&2
+if [[ "$(uname -s)" != Linux && "$(uname -s)" != Darwin ]] || [ "$(id -u)" = 0 ]; then
+  echo 'Run npm-pins.sh as your Linux or macOS login user.' >&2
   exit 1
 fi
 force=0
