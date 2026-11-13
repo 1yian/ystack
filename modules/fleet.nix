@@ -105,8 +105,13 @@ in
       };
       # Puppeteer assumes /opt/google/chrome/chrome on Linux; hand the pinned MCP HM's Chrome.
       home.file.".local/libexec/chrome-devtools-mcp.mjs".text = ''
+        import { readFile } from "node:fs/promises";
+        import { pathToFileURL } from "node:url";
+
+        const packageJson = pathToFileURL("${cfg.npmPrefix}/lib/node_modules/chrome-devtools-mcp/package.json");
+        const { bin } = JSON.parse(await readFile(packageJson, "utf8"));
         process.argv.push("--executablePath", "${lib.getExe pkgs.google-chrome}");
-        await import("${cfg.npmPrefix}/lib/node_modules/chrome-devtools-mcp/build/src/bin/chrome-devtools-mcp.js");
+        await import(new URL(bin["chrome-devtools-mcp"], packageJson).href);
       '';
     })
   ]);
