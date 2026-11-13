@@ -97,7 +97,7 @@
       "description": "OptChat compactor.",
       "chain": [
         "claude/claude-haiku-5-5:medium",
-        "openai-codex/gpt-6-luna:medium",
+        "openai-codex/gpt-6.1-sol:medium",
         "xai/grok-4.7:medium"
       ]
     },
