@@ -15,7 +15,7 @@ let
     "@earendil-works/pi-coding-agent@1.5.2"
     "gh-axi@0.1.51"
     "chrome-devtools-axi@0.1.46"
-    "chrome-devtools-mcp@1.12.0"
+    "chrome-devtools-mcp@1.13.0"
     "lavish-axi@0.1.96"
     "tasks-axi@0.2.6"
     "quota-axi@0.1.69"
