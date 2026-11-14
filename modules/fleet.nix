@@ -17,7 +17,7 @@ let
     "gh-axi@0.1.51"
     "chrome-devtools-axi@0.1.46"
     chromeDevtoolsMcpPin
-    "lavish-axi@0.1.96"
+    "lavish-axi@0.1.97"
     "tasks-axi@0.2.6"
     "quota-axi@0.1.69"
   ];
