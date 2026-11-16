@@ -13,7 +13,7 @@
   "followUpMode": "all",
   "collapseChangelog": true,
   "packages": [
-    "npm:pi-web-access@0.47.0",
+    "npm:pi-web-access@0.48.0",
     "npm:@firstpick/pi-extension-codex-fast-mode@0.1.2",
     {
       "source": "npm:pi-catppuccin-tui@0.1.3",
