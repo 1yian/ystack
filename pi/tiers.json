@@ -2,7 +2,7 @@
   "cooldowns": {
     "rateLimitSeconds": 120,
     "serverErrorSeconds": 15,
-    "usageLimitSeconds": 900,
+    "usageLimitSeconds": 3600,
     "authSeconds": 3600
   },
   "accounts": {
@@ -18,23 +18,21 @@
       "chain": [
         "claude/claude-sonnet-5-5:xhigh",
         "openai-codex/gpt-6.1-sol:medium",
-        "xai/grok-4.7:medium"
+        "xai/grok-4.7:high"
       ]
     },
     "nm-default": {
       "description": "no-mistakes pipeline duties other than review and review fixes: test, document, lint, PR, rebase, and CI repair.",
       "chain": [
         "claude/claude-sonnet-5-5:medium",
-        "openai-codex/gpt-6.1-sol:medium",
-        "xai/grok-4.7:medium"
+        "openai-codex/gpt-6.1-sol:medium"
       ]
     },
     "nm-fixer": {
       "description": "no-mistakes review fixer.",
       "chain": [
         "claude/claude-sonnet-5-5:high",
-        "openai-codex/gpt-6.1-sol:medium",
-        "xai/grok-4.7:medium"
+        "openai-codex/gpt-6.1-sol:medium"
       ]
     },
     "deep": {
@@ -72,16 +70,16 @@
     "quick": {
       "description": "Small bounded chores with an obvious path: docs, config, renames, small cosmetic edits, simple cleanups.",
       "chain": [
-        "claude/claude-haiku-5-5:medium",
-        "openai-codex/gpt-6.1-sol:medium",
-        "xai/grok-4.7:medium"
+        "claude/claude-haiku-5-5:xhigh",
+        "openai-codex/gpt-6.1-sol:xhigh",
+        "xai/grok-4.7:xhigh"
       ]
     },
     "orchestrator": {
       "description": "Firstmate and second-mate supervisor sessions.",
       "chain": [
-        "claude/claude-opus-5-5:high",
-        "openai-codex/gpt-6.1-sol:medium",
+        "claude/claude-opus-5-5:medium",
+        "openai-codex/gpt-6.1-sol:high",
         "xai/grok-4.7:medium"
       ]
     },
@@ -105,8 +103,7 @@
       "description": "no-mistakes reviewer: a different lab than the Claude-heavy implementers.",
       "chain": [
         "openai-codex/gpt-6.1-sol:medium",
-        "claude/claude-opus-5-5:low",
-        "xai/grok-4.7:high"
+        "claude/claude-opus-5-5:low"
       ]
     }
   },
