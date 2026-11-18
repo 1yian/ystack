@@ -1,7 +1,7 @@
 # Fleet host prerequisites: Herdr, treehouse, no-mistakes, Pi, and the axi CLIs
 # (lavish-axi included), all at exact pinned versions. Fleet needs no-mistakes
 # and lavish, so enabling fleet brings both.
-{ config, pkgs, lib, ... }:
+{ config, pkgs, lib, specialArgs, ... }:
 
 let
   cfg = config.ystack.fleet;
@@ -10,6 +10,10 @@ let
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
   chromeDevtoolsMcpPin = "chrome-devtools-mcp@1.13.0";
   tools = import ../pkgs/fleet-tools.nix { inherit pkgs; };
+  p620 = isLinux && (specialArgs.hostname or null) == "p620";
+  noMistakes = if p620 then pkgs.callPackage ../pkgs/no-mistakes-signal-guard.nix { } else tools.no-mistakes;
+  daemonRoot = "${config.home.homeDirectory}/.no-mistakes";
+  daemonInstance = builtins.substring 0 8 (builtins.hashString "sha256" daemonRoot);
   # Exact pins. Bump deliberately; Herdr, no-mistakes, and node changes need a
   # coordinated all-host rollout (herdr machine add refuses a mismatched server).
   corePins = [
@@ -68,7 +72,7 @@ in
       home.packages = [
         tools.herdr
         tools.treehouse
-        tools.no-mistakes
+        noMistakes
         pkgs.nodejs
         pkgs.gh
         pkgs.zstd
@@ -94,6 +98,13 @@ in
         if [ -r /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh ]; then
           . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
         fi
+      '';
+    })
+    (lib.mkIf p620 {
+      home.file.".config/systemd/user/no-mistakes-daemon-${daemonInstance}.service.d/10-ystack-package.conf".text = ''
+        [Service]
+        ExecStart=
+        ExecStart=${lib.getExe noMistakes} daemon run --root "${daemonRoot}"
       '';
     })
     (lib.mkIf (isLinux && cfg.linuxBrowser.enable) {
