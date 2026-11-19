@@ -21,7 +21,7 @@ home-manager.users.me = {
 
 Options (`modules/`): `ystack.{shell,ui,agents,skills,pi,fleet}.enable` (default
 on), `ystack.skills.only`, `ystack.pi.{settingsFile,tiersFile,tiersOverlay,extensions.*}`,
-`ystack.fleet.{npmPrefix,npmExtra,herdrPiIntegration,linuxBrowser.enable}`,
+`ystack.fleet.{npmPrefix,npmExtra,herdrPiIntegration}`,
 `ystack.ui.{wezterm.localConfig,fastfetchConfig}`.
 
 ## What is in it
@@ -33,16 +33,22 @@ on), `ystack.skills.only`, `ystack.pi.{settingsFile,tiersFile,tiersOverlay,exten
 | `modules/agents.nix`, `agents/AGENTS.md` | the one AGENTS.md linked for Pi, Claude Code, Codex, OpenCode |
 | `modules/pi.nix`, `pi/` | Pi settings, tiers, theme, status line and other extensions |
 | `modules/fleet.nix`, `pkgs/` | exact-pinned Herdr, treehouse, no-mistakes, Pi, axi CLIs (lavish-axi included) |
-| `skills/` | axi, lavish, no-mistakes, principles |
+| `skills/` | axi, lavish, no-mistakes, principles (plus the `fleet-browser` skill, linked from its pin) |
 
 Fleet brings no-mistakes and lavish as dependencies. Versions are exact pins;
 bump them in a release and call out Herdr, no-mistakes, or node changes, which
 need all hosts rebuilt before the next fleet update.
 
-On Linux, activation reconciles all fleet npm pins plus `ystack.fleet.npmExtra`.
-On macOS, it reconciles only `chrome-devtools-mcp` from the same pin; other
-fleet tools remain separately installed. Both use `ystack.fleet.npmPrefix`
-(default `~/.local`), so an existing npm install there is upgraded in place.
+On Linux, activation reconciles all fleet npm pins plus `ystack.fleet.npmExtra`
+into `ystack.fleet.npmPrefix` (default `~/.local`), so an existing npm install
+there is upgraded in place. On macOS, fleet tools remain separately installed.
+
+fleet-browser (private repo) is pinned by commit and tree hash with an
+eval-time `builtins.fetchTree`, because a fixed-output GitHub fetch cannot
+authenticate; the first evaluation on a host needs git access to it (`gh auth
+setup-git`). Only its skill is linked here. The service and the `fleet-browser`
+CLI (which brings its own pinned agent-browser) are installed per that repo's
+README.
 
 ## Skills
 

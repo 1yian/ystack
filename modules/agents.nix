@@ -4,12 +4,20 @@
 let
   cfg = config.ystack;
   link = cfg.link;
-  skillNames = [ "axi" "lavish" "no-mistakes" "principles" ];
+  fleetBrowser = (import ../pkgs/fleet-tools.nix { inherit pkgs; }).fleet-browser;
+  skillNames = [ "axi" "fleet-browser" "lavish" "no-mistakes" "principles" ];
   # `no-mistakes init` rewrites ~/.agents/skills/no-mistakes/SKILL.md with the text
   # embedded in the installed binary. Linked out-of-store, that write lands in the
   # checkout and dirties the tracked file, so this one skill always links read-only
   # from the store (init's refresh then fails harmlessly) and the tracked text stays.
-  skillSource = s: if s == "no-mistakes" then "${cfg.root}/skills/${s}" else link "skills/${s}";
+  skillSource =
+    s:
+    if s == "no-mistakes" then
+      "${cfg.root}/skills/${s}"
+    else if s == "fleet-browser" then
+      "${fleetBrowser}/skills/${s}"
+    else
+      link "skills/${s}";
 in
 {
   options.ystack.agents.enable = lib.mkEnableOption "the ystack agent instructions" // { default = true; };

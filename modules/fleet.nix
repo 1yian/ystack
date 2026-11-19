@@ -8,7 +8,6 @@ let
   root = config.ystack.root;
   isLinux = pkgs.stdenv.hostPlatform.isLinux;
   isDarwin = pkgs.stdenv.hostPlatform.isDarwin;
-  chromeDevtoolsMcpPin = "chrome-devtools-mcp@1.13.0";
   tools = import ../pkgs/fleet-tools.nix { inherit pkgs; };
   p620 = isLinux && (specialArgs.hostname or null) == "p620";
   noMistakes = if p620 then pkgs.callPackage ../pkgs/no-mistakes-signal-guard.nix { } else tools.no-mistakes;
@@ -19,8 +18,6 @@ let
   corePins = [
     "@earendil-works/pi-coding-agent@1.5.2"
     "gh-axi@0.1.51"
-    "chrome-devtools-axi@0.1.46"
-    chromeDevtoolsMcpPin
     "lavish-axi@0.1.97"
     "tasks-axi@0.2.6"
     "quota-axi@0.1.69"
@@ -32,7 +29,7 @@ in
     npmPrefix = lib.mkOption {
       type = lib.types.str;
       default = "${config.home.homeDirectory}/.local";
-      description = "Global npm prefix for the pinned CLIs (Linux) and chrome-devtools-mcp (macOS).";
+      description = "Global npm prefix for the pinned CLIs (Linux).";
     };
     npmExtra = lib.mkOption {
       type = lib.types.listOf lib.types.str;
@@ -45,16 +42,15 @@ in
       default = true;
       description = "Install Herdr's own Pi integration when missing (Linux).";
     };
-    linuxBrowser.enable = lib.mkEnableOption "headless Chrome wired to chrome-devtools-axi (Linux)";
   };
 
   config = lib.mkIf cfg.enable (lib.mkMerge [
     {
-      home.activation.ystackNpmPins = lib.mkIf (isLinux || isDarwin) (
+      home.activation.ystackNpmPins = lib.mkIf isLinux (
         lib.hm.dag.entryAfter [ "writeBoundary" ] ''
           run env PATH="${pkgs.nodejs}/bin:${pkgs.bash}/bin:$PATH" \
             ${pkgs.bash}/bin/bash ${root}/bin/npm-pins.sh \
-            ${lib.escapeShellArgs ([ cfg.npmPrefix ] ++ (if isLinux then corePins ++ cfg.npmExtra else [ chromeDevtoolsMcpPin ]))}
+            ${lib.escapeShellArgs ([ cfg.npmPrefix ] ++ corePins ++ cfg.npmExtra)}
         ''
       );
       home.sessionPath = lib.mkIf (cfg.npmPrefix != "${config.home.homeDirectory}/.local") [ "${cfg.npmPrefix}/bin" ];
@@ -105,24 +101,6 @@ in
         [Service]
         ExecStart=
         ExecStart=${lib.getExe noMistakes} daemon run --root "${daemonRoot}"
-      '';
-    })
-    (lib.mkIf (isLinux && cfg.linuxBrowser.enable) {
-      home.packages = [ pkgs.google-chrome ];
-      home.sessionVariables = {
-        # Use Chrome's namespace sandbox; Nix cannot provide a root-setuid helper.
-        CHROME_DEVTOOLS_AXI_CHROME_ARGS = "--disable-setuid-sandbox";
-        CHROME_DEVTOOLS_AXI_MCP_PATH = "${config.home.homeDirectory}/.local/libexec/chrome-devtools-mcp.mjs";
-      };
-      # Puppeteer assumes /opt/google/chrome/chrome on Linux; hand the pinned MCP HM's Chrome.
-      home.file.".local/libexec/chrome-devtools-mcp.mjs".text = ''
-        import { readFile } from "node:fs/promises";
-        import { pathToFileURL } from "node:url";
-
-        const packageJson = pathToFileURL("${cfg.npmPrefix}/lib/node_modules/chrome-devtools-mcp/package.json");
-        const { bin } = JSON.parse(await readFile(packageJson, "utf8"));
-        process.argv.push("--executablePath", "${lib.getExe pkgs.google-chrome}");
-        await import(new URL(bin["chrome-devtools-mcp"], packageJson).href);
       '';
     })
   ]);
