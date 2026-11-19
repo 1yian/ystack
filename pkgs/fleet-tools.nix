@@ -43,4 +43,10 @@ in
   no-mistakes =
     archiveTool "no-mistakes" "1.106.1"
       "fbf131356a278623a509b6b50ecb39c5375b1a82e7dcfc48e42d10e761416d1e";
+  fleet-browser = builtins.fetchTree {
+    type = "git";
+    url = "https://github.com/1yian/fleet-browser.git";
+    rev = "3189b46e10ce8f7c2f8177716f1b3ef4c4df3f37";
+    narHash = "sha256-dZvjZTTGVbV9HPlqsv9lVOY37F9eGw5S90ri/pW8Ly4=";
+  };
 }
