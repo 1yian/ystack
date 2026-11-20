@@ -95,8 +95,7 @@
     "reviewer": {
       "description": "no-mistakes reviewer: a different lab than the Claude-heavy implementers.",
       "chain": [
-        "openai-codex/gpt-6.2-sol:high",
-        "openai-codex/gpt-6.2-astra:medium",
+        "openai-codex/gpt-6.2-sol:low",
         "claude/claude-opus-5-5:low"
       ]
     }
