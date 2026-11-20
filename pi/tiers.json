@@ -60,15 +60,15 @@
     "watch": {
       "description": "Observe and report only, making no changes: monitoring after a merge or deploy, watching live calls or traffic for a period, read-only production checks. If the task itself merges, deploys, rolls out, or changes anything, it is not watch.",
       "chain": [
-        "claude/claude-haiku-5-5:xhigh",
-        "openai-codex/gpt-6.1-terra:medium"
+        "openai-codex/gpt-6.1-terra:low",
+        "claude/claude-haiku-5-5:xhigh"
       ]
     },
     "quick": {
       "description": "Small bounded chores with an obvious path: docs, config, renames, small cosmetic edits, simple cleanups.",
       "chain": [
-        "claude/claude-haiku-5-5:xhigh",
-        "openai-codex/gpt-6.1-terra:medium"
+        "openai-codex/gpt-6.1-terra:low",
+        "claude/claude-haiku-5-5:xhigh"
       ]
     },
     "orchestrator": {
@@ -88,8 +88,8 @@
     "compact": {
       "description": "OptChat compactor.",
       "chain": [
-        "claude/claude-haiku-5-5:medium",
-        "openai-codex/gpt-6.1-terra:medium"
+        "openai-codex/gpt-6.1-terra:low",
+        "claude/claude-haiku-5-5:medium"
       ]
     },
     "reviewer": {
