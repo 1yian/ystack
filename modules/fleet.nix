@@ -16,9 +16,9 @@ let
   # Exact pins. Bump deliberately; Herdr, no-mistakes, and node changes need a
   # coordinated all-host rollout (herdr machine add refuses a mismatched server).
   corePins = [
-    "@earendil-works/pi-coding-agent@1.5.2"
-    "gh-axi@0.1.51"
-    "lavish-axi@0.1.97"
+    "@earendil-works/pi-coding-agent@1.6.0"
+    "gh-axi@0.1.52"
+    "lavish-axi@0.1.98"
     "tasks-axi@0.2.6"
     "quota-axi@0.1.69"
   ];
