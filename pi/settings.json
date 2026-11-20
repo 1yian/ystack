@@ -21,7 +21,7 @@
     },
     "npm:@gotgenes/pi-anthropic-auth@3.5.0",
     "npm:@ff-labs/pi-fff@0.11.0",
-    "git:github.com/1yian/pi-tiers@57d2c03e233d4f5fea2aba22d06af9438d66d862",
+    "git:github.com/1yian/pi-tiers@1ebb7b83e5e9441a935c4a0aaaa963ff18622535",
     "npm:pi-multi-pass@1.14.0"
   ],
   "lastChangelogVersion": "1.4.0",
