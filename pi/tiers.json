@@ -74,15 +74,15 @@
     "orchestrator": {
       "description": "Firstmate and second-mate supervisor sessions.",
       "chain": [
-        "claude/claude-opus-5-5:medium",
-        "openai-codex/gpt-6.2-sol:high"
+        "claude/claude-opus-5-5:low",
+        "openai-codex/gpt-6.2-sol:low"
       ]
     },
     "weaker-orchestrator": {
       "description": "Supervisor sessions that do not need Opus-level reasoning (e.g. the Cleo Growth second mate).",
       "chain": [
-        "claude/claude-sonnet-5-5:xhigh",
-        "openai-codex/gpt-6.2-sol:high"
+        "claude/claude-sonnet-5-5:medium",
+        "openai-codex/gpt-6.2-sol:low"
       ]
     },
     "compact": {
