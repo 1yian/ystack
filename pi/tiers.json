@@ -37,7 +37,7 @@
     "deep": {
       "description": "Plan, research, investigate, root-cause, evaluate, or design when there is no verified plan yet; open-ended analysis, evals, and data investigation.",
       "chain": [
-        "claude/claude-fable-5-2:medium",
+        "openai-codex/gpt-6.2-astra:medium",
         "claude/claude-opus-5-5:high",
         "openai-codex/gpt-6.2-sol:xhigh"
       ]
@@ -52,7 +52,7 @@
     "visual": {
       "description": "Work whose acceptance depends on visual quality or visual judgment: UI and UX, layout, styling, copy and design passes, landing pages and websites (including building the real site or app screens from approved designs, checked by screenshots), design systems, motion graphics, ads, video, or other creative media.",
       "chain": [
-        "claude/claude-fable-5-2:low",
+        "openai-codex/gpt-6.2-astra:low",
         "claude/claude-opus-5-5:medium",
         "openai-codex/gpt-6.2-sol:medium"
       ]
@@ -96,7 +96,7 @@
       "description": "no-mistakes reviewer: a different lab than the Claude-heavy implementers.",
       "chain": [
         "openai-codex/gpt-6.2-sol:high",
-        "claude/claude-fable-5-2:medium",
+        "openai-codex/gpt-6.2-astra:medium",
         "claude/claude-opus-5-5:low"
       ]
     }
