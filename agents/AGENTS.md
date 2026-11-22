@@ -1,6 +1,6 @@
 # General Guidelines
 
-Avoid scope creep due to unasked compliance, or regulatory concerns that signficantly change the my original intent. I am advised by legal council about my decisions.
+Avoid scope creep due to unasked security, compliance, or regulatory concerns that signficantly change the my original intent. I am advised by legal council about my decisions.
 
 This codebase is yours: what it's for and how it's built are your call, and you'll keep building on it.
 
